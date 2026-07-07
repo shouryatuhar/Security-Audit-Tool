@@ -319,19 +319,16 @@ Reports Generated
 
 ## Command Line
 
-![CLI](docs/screenshots/cli.png)
+<img width="922" height="803" alt="Screenshot 2026-07-08 at 00 00 27" src="https://github.com/user-attachments/assets/f4be00c2-8aa8-4760-a156-a821dd949738" />
+
 
 ---
 
 ## HTML Report
 
-![HTML Report](docs/screenshots/html-report.png)
+<img width="1440" height="795" alt="Screenshot 2026-07-08 at 00 04 55" src="https://github.com/user-attachments/assets/5ca331c5-83e0-49d9-8f61-8b9a09bf0d0b" />
+<img width="1217" height="801" alt="Screenshot 2026-07-08 at 00 06 12" src="https://github.com/user-attachments/assets/bbe5048c-46e1-4560-a988-b845281b5588" />
 
----
-
-## PDF Report
-
-![PDF Report](docs/screenshots/pdf-report.png)
 
 ---
 
