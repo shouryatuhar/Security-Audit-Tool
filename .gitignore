@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# HostSentinel runtime output
+logs/
+reports/
+*.html
+*.pdf
+*.json
+.cache/
+
+# Legacy log files
+security_audit.log
+security_fix.log
+
+# ML model artifacts
+ml/models/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.swp
+
+# Secrets
+.env
+*.pem

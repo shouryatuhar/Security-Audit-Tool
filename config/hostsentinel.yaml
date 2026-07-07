@@ -1,0 +1,48 @@
+# HostSentinel default configuration
+# Copy to hostsentinel.yaml and customise for your environment.
+
+product_name: HostSentinel
+version: "1.0.0"
+
+logging:
+  level: INFO
+  file: logs/hostsentinel.log
+  audit_file: logs/audit.log
+
+reports:
+  output_dir: reports
+  formats:
+    - json
+    - html
+    - pdf
+
+checks:
+  enabled: []        # empty = all checks
+  categories: []     # e.g. [network, authentication]
+  skip: []
+
+scoring:
+  pass_threshold: 80
+  warn_threshold: 60
+
+cve:
+  enabled: true
+  cache_dir: .cache/cve
+
+port_scan:
+  enabled: true
+  risky_ports: [21, 23, 135, 139, 445, 3389, 5900, 6379, 27017]
+
+file_permissions:
+  monitored_paths:
+    - /etc/passwd
+    - /etc/shadow
+    - /etc/sudoers
+    - /etc/ssh/sshd_config
+  max_mode: "0644"
+
+password_policy:
+  min_length: 12
+  require_complexity: true
+
+unused_account_days: 90
