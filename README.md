@@ -1,122 +1,393 @@
 # HostSentinel
 
-**HostSentinel** is an enterprise-grade, cross-platform host security auditing and posture management framework. It performs automated security assessments, behavioural anomaly detection, and compliance baselining comparable to commercial endpoint security tools and CIS benchmark scanners.
+<p align="center">
 
-Designed for security engineers, penetration testers, and system administrators, HostSentinel identifies misconfigurations, exposes vulnerable software, and detects indicators of compromise (IoCs) across Linux, macOS, and Windows.
+Cross-Platform Host Security Auditing Framework
+
+Automated Security Assessments • Host Hardening • Risk Prioritization • Professional Reporting
+
+</p>
+
+<p align="center">
+
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![Platforms](https://img.shields.io/badge/Platforms-Linux%20|%20macOS%20|%20Windows-success)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Version](https://img.shields.io/badge/Version-v1.0-orange)
+
+</p>
 
 ---
 
-## 🛡️ Core Capabilities
+## Overview
 
-- **Behavioural Threat Detection:** Identifies reverse shells, credential dumping, and crypto-mining behaviours in running processes rather than relying solely on naive binary names.
-- **Enterprise Reporting:** Generates professional HTML, PDF, and JSON reports with rich contextual fields including CVSS v3.1 scoring, affected assets, detection commands, and actionable remediation steps.
-- **Modular Plugin Architecture:** Extensible `BaseCheck` interface allows for rapid development of custom compliance and security checks without modifying the core engine.
-- **Multi-Platform Support:** OS-aware orchestration automatically routes checks to appropriate platform implementations (Linux, macOS, Windows).
-- **Vulnerability Correlation:** Integrates offline CVE mapping for installed packages, providing immediate visibility into known exploitability.
+HostSentinel is a cross-platform host security auditing framework that evaluates the security posture of Linux, macOS, and Windows systems through modular security checks, risk prioritization, and professional reporting.
+
+The framework identifies security misconfigurations, insecure services, weak authentication settings, exposed network services, outdated software, persistence mechanisms, and other host-level security issues. It presents findings through structured HTML, PDF, and JSON reports with remediation guidance and supporting evidence.
+
+HostSentinel is designed to demonstrate modern security engineering practices including modular architecture, structured finding models, platform abstraction, and maintainable audit pipelines.
 
 ---
 
-## 🏗️ Architecture
+## Features
 
-HostSentinel is built on a clean, decoupled architecture:
+### Security Auditing
+
+- Cross-platform host security assessment
+- Automated security posture evaluation
+- Security configuration auditing
+- Local vulnerability correlation
+- Risk prioritization
+- Professional remediation guidance
+
+### Platform Support
+
+- Linux
+- macOS
+- Windows
+
+Platform detection is automatic. HostSentinel executes only the checks applicable to the current operating system.
+
+---
+
+### Reporting
+
+Generate multiple report formats:
+
+- HTML
+- PDF
+- JSON
+
+Every finding includes:
+
+- Severity
+- Internal Risk Score
+- Detection confidence
+- Technical explanation
+- Business impact
+- Evidence
+- Detection command
+- Verification command
+- Remediation guidance
+- Relevant security references
+
+---
+
+### Modular Architecture
+
+Each security check is implemented independently using a plugin architecture.
+
+Adding a new audit module requires implementing the BaseCheck interface without modifying the audit engine.
+
+This allows HostSentinel to remain easily extensible while keeping the orchestration layer clean.
+
+---
+
+# Architecture
+
+```mermaid
+graph TD
+
+CLI --> AuditEngine
+
+AuditEngine --> PlatformDetector
+
+PlatformDetector --> Linux
+PlatformDetector --> macOS
+PlatformDetector --> Windows
+
+Linux --> Checks
+macOS --> Checks
+Windows --> Checks
+
+Checks --> Findings
+
+Findings --> ScoringEngine
+
+ScoringEngine --> Reports
+
+Reports --> HTML
+Reports --> PDF
+Reports --> JSON
+```
+
+---
+
+# Project Structure
 
 ```text
 HostSentinel/
-├── core/           # Audit orchestration, Finding models, tiered scoring, OS detection
-├── checks/         # Modular security checks (plugins inheriting BaseCheck)
-├── platforms/      # Platform-specific check registration factories
-├── reports/        # Enterprise JSON, HTML, and PDF report generators
-├── config/         # YAML-based configuration management
-├── cli/            # Professional argparse-based command-line interface
-├── utils/          # Logging, command helpers, CVE correlation
-├── fixes/          # Interactive remediation workflows
-└── hostsentinel.py # Main entry point
+
+├── checks/
+│   ├── authentication
+│   ├── networking
+│   ├── persistence
+│   ├── integrity
+│   ├── malware
+│   └── hardening
+│
+├── core/
+│   ├── audit_engine.py
+│   ├── models.py
+│   ├── scoring.py
+│   └── platform_detection.py
+│
+├── reports/
+│   ├── html_report.py
+│   ├── pdf_report.py
+│   └── json_report.py
+│
+├── platforms/
+│
+├── config/
+│
+├── utils/
+│
+├── fixes/
+│
+└── hostsentinel.py
 ```
 
-### The `Finding` Data Model
+---
 
-Every security check returns instances of the `Finding` dataclass, which strictly enforces enterprise-grade metadata:
+# Audit Pipeline
 
-- **CVSS Score & Vector:** Approximate severity based on CVSS v3.1.
-- **Confidence:** Detection confidence (Low, Medium, High, Exact).
-- **Affected Asset & PID:** Exact mapping to the compromised entity.
-- **Technical Detail & Business Impact:** Clear, executive-friendly explanations.
-- **Remediation Steps & Verification:** Actionable commands to resolve and verify fixes.
+```mermaid
+graph LR
+
+Start
+
+-->
+
+Platform Detection
+
+-->
+
+Security Checks
+
+-->
+
+Findings
+
+-->
+
+Risk Scoring
+
+-->
+
+Report Generation
+
+-->
+
+Remediation Guidance
+```
 
 ---
 
-## 📊 Tiered Scoring System
+# Risk Scoring
 
-HostSentinel employs a logarithmic, diminishing-penalty scoring algorithm (0–100) to accurately reflect overall host risk without zeroing out from numerous low-severity issues:
+HostSentinel assigns every finding a severity level and calculates an overall host security score.
 
-- **80–100 (Healthy):** Host meets security baselines; minor tweaks recommended.
-- **70–80 (Minor Issues):** Low-risk configuration deviations.
-- **50–70 (Medium Issues):** Several moderate risks requiring scheduled remediation.
-- **20–50 (Serious Security Issues):** Multiple high-risk vulnerabilities exposing the host to exploitation.
-- **< 20 (Critical Compromise):** Indicators of active compromise or catastrophic exposure.
+The scoring algorithm uses weighted deductions with diminishing penalties to avoid disproportionately lowering scores due to numerous low-severity findings.
+
+| Score | Risk |
+|--------|------|
+| 80–100 | Healthy |
+| 70–79 | Minor Issues |
+| 50–69 | Medium Risk |
+| 20–49 | Serious Risk |
+| 0–19 | Critical |
+
+The score is intended to prioritize remediation efforts and provide an overall view of host security posture.
 
 ---
 
-## 🚀 Quick Start
+# Included Security Modules
 
-### Prerequisites
-- Python 3.8+
-- `pip install -r requirements.txt`
+| Check | Description |
+|---------|-------------|
+| SSH Configuration | SSH daemon hardening and authentication checks |
+| Firewall | Firewall state validation |
+| Password Policy | Password complexity auditing |
+| Open Ports | Listening service enumeration |
+| Package Updates | Outdated software detection |
+| Package Inventory | Installed software inventory |
+| Running Services | Legacy and insecure service detection |
+| User Privileges | Privilege escalation opportunities |
+| File Permissions | Sensitive file permission auditing |
+| File Integrity | Critical file integrity monitoring |
+| Scheduled Tasks | Persistence mechanism detection |
+| Startup Services | Boot persistence auditing |
+| Dangerous Configuration | Hardening validation |
+| Rootkit Detection | Rootkit scanner integration |
+| Vulnerability Summary | Local CVE correlation |
 
-### Usage
+---
+
+# Installation
+
+Clone the repository
 
 ```bash
-# Run a full audit across all domains
-python hostsentinel.py
+git clone https://github.com/shouryatuhar/HostSentinel.git
 
-# List all available security modules
-python hostsentinel.py --list-checks
+cd HostSentinel
+```
 
-# Run targeted checks (e.g., SSH and Firewall) with PDF and HTML reporting
-python hostsentinel.py -k ssh_config -k firewall -f json -f html -f pdf
+Install dependencies
 
-# Generate reports in a specific directory
-python hostsentinel.py -o /path/to/reports/
+```bash
+pip install -r requirements.txt
 ```
 
 ---
 
-## 🧩 Security Modules
+# Usage
 
-HostSentinel includes 18+ comprehensive audit modules:
+Run a complete audit
 
-| Check ID | Category | Description |
-|----------|----------|-------------|
-| `ssh_config` | Authentication | SSH daemon hardening, root login, password auth checks. |
-| `firewall` | Network | Validates state of UFW, firewalld, iptables, macOS ALF, Windows Firewall. |
-| `password_policy` | Authentication | Verifies password length constraints and detects empty passwords. |
-| `open_ports` | Network | Identifies risky externally-facing services vs. localhost bindings. |
-| `port_scan` | Network | Lightweight socket enumeration for localhost pivoting risks. |
-| `outdated_packages` | Patching | Validates pending system updates (APT/DNF/YUM/macOS) with CVE correlation. |
-| `package_inventory` | Inventory | Baseline enumeration for software asset management. |
-| `suspicious_processes` | Malware | Behavioural detection (e.g., netcat reverse shells, obfuscated PowerShell). |
-| `running_services` | Services | Identifies legacy cleartext protocols (Telnet, FTP, RSH). |
-| `rootkit_detection` | Malware | Integrates with rkhunter and chkrootkit. |
-| `unused_accounts` | Authentication | Detects stale logins and dormant accounts. |
-| `user_privileges` | Authentication | Audits UID 0 duplicates, NOPASSWD sudoers, and admin group sprawl. |
-| `file_integrity` | Integrity | Monitors critical binaries for tampering via SHA256 hashes. |
-| `file_permissions` | Integrity | Validates strict permissions on `/etc/shadow`, `/etc/sudoers`. |
-| `scheduled_tasks` | Persistence | Audits crontabs and launch daemons for persistence mechanisms. |
-| `startup_services` | Persistence | Enumerates boot-level persistence items. |
-| `dangerous_config` | Hardening | Checks IP forwarding, core dumps, and world-writable directories. |
+```bash
+python hostsentinel.py
+```
+
+List available checks
+
+```bash
+python hostsentinel.py --list-checks
+```
+
+Run selected checks
+
+```bash
+python hostsentinel.py -k ssh_config -k firewall
+```
+
+Generate HTML and PDF reports
+
+```bash
+python hostsentinel.py --format html --format pdf
+```
+
+Specify output directory
+
+```bash
+python hostsentinel.py -o reports/
+```
 
 ---
 
-## 🤝 Contributing
+# Example Output
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to add new checks, improve reporting, or fix bugs. 
+```
+Host: MacBook-Air
 
-Ensure you adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
+Overall Score: 82
 
-## 🛡️ Security
+Platform: macOS
 
-If you discover a security vulnerability within HostSentinel, please see our [Security Policy](SECURITY.md).
+Checks Executed: 18
 
-## 📄 License
+Findings
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+Critical : 0
+
+High : 1
+
+Medium : 2
+
+Low : 3
+
+Generated Reports
+
+✓ HTML
+
+✓ PDF
+
+✓ JSON
+```
+
+---
+
+# Sample Reports
+
+HostSentinel generates:
+
+- Executive Summary
+- Severity Breakdown
+- Detailed Findings
+- Technical Evidence
+- Business Impact
+- Remediation Guidance
+- Verification Commands
+
+Screenshots
+
+```
+docs/screenshots/
+
+cli.png
+
+html-report.png
+
+pdf-report.png
+```
+
+---
+
+# Design Decisions
+
+HostSentinel emphasizes:
+
+- Low false-positive detections
+- Explainable findings
+- Platform abstraction
+- Modular architecture
+- Professional reporting
+- Maintainable code
+- Structured security metadata
+
+The project intentionally avoids unnecessary complexity and focuses on producing reliable, explainable security assessments.
+
+---
+
+# Future Improvements
+
+Planned enhancements include:
+
+- Remote host auditing
+- Fleet-wide scanning
+- Scheduled audits
+- Compliance profile support (CIS/NIST)
+- SARIF export
+- Plugin marketplace
+- Centralized dashboard
+
+---
+
+# Contributing
+
+Contributions are welcome.
+
+Please read:
+
+- CONTRIBUTING.md
+- CODE_OF_CONDUCT.md
+- SECURITY.md
+
+before submitting pull requests.
+
+---
+
+# License
+
+Licensed under the MIT License.
+
+See LICENSE for details.
+
+---
+
+# Acknowledgements
+
+HostSentinel is inspired by the architectural principles and reporting approaches commonly found in host security auditing and vulnerability assessment tools.
+
+The project was developed for educational purposes to explore secure software design, security automation, modular system architecture, and host security assessment techniques.
